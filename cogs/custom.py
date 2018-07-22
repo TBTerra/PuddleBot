@@ -49,9 +49,9 @@ class Custom:
 			will add the command 'test' with the reply of 'This as a test command.'
 		"""
 		if not self.user_has_power(ctx):
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick))
-		if ctx.message.mentions or ctx.message.mention_everyone or ctx.message.role_mentions:
-			em = discord.Embed(title="Error", description="Custom Commands cannot mention people/roles/everyone.", colour=cfg.colors['red'])
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+		if ctx.message.mention_everyone:
+			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em)
 		elif len(output) > 1800:
 			em = discord.Embed(title="Error", description="The output is too long", colour=cfg.colors['red'])
@@ -78,9 +78,9 @@ class Custom:
 			will edit the command 'test' and change its reply to 'This as a test command.'
 		"""
 		if not self.user_has_power(ctx):
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick))
-		if ctx.message.mentions or ctx.message.mention_everyone or ctx.message.role_mentions:
-			em = discord.Embed(title="Error", description="Custom Commands cannot mention people/roles/everyone.", colour=cfg.colors['red'])
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+		if ctx.message.mention_everyone:
+			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em)
 		elif len(output) > 1800:
 			em = discord.Embed(title="Error", description="The output is too long", colour=cfg.colors['red'])
@@ -107,7 +107,7 @@ class Custom:
 			will remove the command 'test'
 		"""
 		if not self.user_has_power(ctx):
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick))
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if command not in self.cc:
 			em = discord.Embed(title="Error", description="Custom Command does not exist.\nHow am I supposed to remove it", colour=cfg.colors['red'])
 			return await ctx.send(embed=em)
@@ -131,11 +131,11 @@ class Custom:
 	async def setpower(self, ctx, *, role: discord.Role = None):
 		""""set privilege level (bot owner only)"""
 		if ctx.message.author.id != cfg.bot['owner']:
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou arnt the bot owner!'.format(ctx.author.nick))
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou arnt the bot owner!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if role is None:
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou haven\'t specified a role!'.format(ctx.author.nick))
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou haven\'t specified a role!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if role not in ctx.message.guild.roles:
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick))
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		cfg.bot['power-role'] = role.id
 		cfg.savecfg()
 

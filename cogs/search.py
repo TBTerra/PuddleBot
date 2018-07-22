@@ -39,7 +39,7 @@ class Search:
 		data = json.loads(r.text)
 		url = (random.choice(data['results']))['image']
 		print(url)
-		em = discord.Embed(title="Image search for: {}".format(search), description='{}\n{}'.format(ctx.author.nick,url), colour=cfg.colors['green'])
+		em = discord.Embed(title="Image search for: {}".format(search), description='{}\n{}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,url), colour=cfg.colors['green'])
 		em.set_image(url=url)
 		em.set_thumbnail(url='https://duckduckgo.com/assets/logo_header.v107.min.png')
 		return await ctx.send(embed=em)
@@ -56,7 +56,7 @@ class Search:
 		for item in data['items']:
 			if item['id']['kind'] == 'youtube#video':
 				return await ctx.send('https://www.youtube.com/watch?v={}'.format(item['id']['videoId']))
-		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.nick))
+		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 
 def setup(bot):
 	bot.add_cog(Search(bot))
