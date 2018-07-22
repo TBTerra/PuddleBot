@@ -29,8 +29,9 @@ class Custom:
 			return
 		msg = message.content.lower()
 		if msg.startswith(self.bot.command_prefix):
-			if msg.split(self.bot.command_prefix)[1] in self.cc:
-				return await message.channel.send(self.cc[msg.split(self.bot.command_prefix)[1]])
+			msg = msg[len(self.bot.command_prefix):]
+			if msg in self.cc:
+				return await message.channel.send(self.cc[msg])
 		return
 	
 	@group(pass_context=True, aliases=["cc"])
