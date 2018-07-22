@@ -1,0 +1,21 @@
+{
+    "bot": {
+        "token": "",
+        "owner": 0,
+        "prefix": ";",
+        "description": "Put your description here",
+        "game": "Being Developed",
+        "yt-api": "",
+        "power-role": 0
+    },
+    "colors": {
+        "red": 13369344,
+        "green": 52224,
+        "blue": 204
+    },
+    "cogs": [
+        "fun",
+        "search",
+        "custom"
+    ]
+}
