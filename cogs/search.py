@@ -12,7 +12,7 @@ class Search:
 	@bot.command()
 	async def img(self, ctx, *, search):
 		"""
-		Gets an image base on search
+		Gets an image based on search
 		Uses duckduckgo, returns a random image from the first page of results
 		Usage:
 			{command_prefix}img cute dogs
@@ -48,7 +48,7 @@ class Search:
 	@bot.command()
 	async def yt(self, ctx, *, search):
 		"""
-		Gets a youtube video base on search
+		Gets a youtube video based on search
 		Usage:
 			{command_prefix}yt cute dogs
 		"""
