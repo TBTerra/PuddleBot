@@ -6,7 +6,7 @@ class Fun:
 		self.bot = bot
 	
 	@bot.command()
-	async def hug(self, ctx, *, user: discord.User = None):
+	async def hug(self, ctx, *, member: discord.Member = None):
 		"""
 		Hugs the mentioned user :3
 		Usage:
@@ -14,12 +14,12 @@ class Fun:
 			{command_prefix}hug
 			to hug self
 		"""
-		if not user:
-			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, ctx.author.name))
-		return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, user.name))
+		if not member:
+			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, ctx.author.nick))
+		return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, member.nick))
 
 	@bot.command(aliases=["headpat", "pet"])
-	async def pat(self, ctx, *, user: discord.User = None):
+	async def pat(self, ctx, *, member: discord.Member = None):
 		"""
 		Gives headpats to the mentioned user :3
 		Usage:
@@ -27,9 +27,9 @@ class Fun:
 			{command_prefix}pat
 			to pat self
 		"""
-		if not user:
-			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, ctx.author.name))
-		return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, user.name))
+		if not member:
+			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, ctx.author.nick))
+		return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, member.nick))
 	
 	@bot.command(aliases=["cf"])
 	async def coinflip(self, ctx):
