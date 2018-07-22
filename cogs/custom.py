@@ -117,6 +117,15 @@ class Custom:
 		em = discord.Embed(title="Done", description='{} has been removed'.format(command), colour=cfg.colors['green'])
 		return await ctx.send(embed=em)
 	
+	@custom.command()
+	async def list(self, ctx):
+		list = ''
+		for key in self.cc.keys():
+			list += '{}\n'.format(key)
+		list=list[:-1]
+		em = discord.Embed(title="Custom Command list", description=list, colour=cfg.colors['blue'])
+		return await ctx.send(embed=em)
+	
 	@bot.command()
 	async def setpower(self, ctx, *, role: discord.Role = None):
 		""""set privilege level (bot owner only)"""
