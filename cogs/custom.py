@@ -16,7 +16,7 @@ class Custom:
 			self.cc = {}
 	
 	def user_has_power(self,ctx):
-		#if ctx.message.author.id == cfg.bot['owner']: return True
+		if ctx.message.author.id == cfg.bot['owner']: return True
 		#get the role with the right ID
 		for role in ctx.guild.roles:
 			if role.id == cfg.bot['power-role']:
