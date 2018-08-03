@@ -190,6 +190,8 @@ class Fun:
 				response += ' Total: {}'.format(total)
 			if i < (times-1):
 				response += '\n'
+		if len(response)>1800:
+			return await ctx.send('I\'m not sure what on earth you\'ve done here, but the rolls post is to long to print. <:facepalmy:263144001777958913>')
 		return await ctx.send(response)
 
 def setup(bot):
