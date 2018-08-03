@@ -13,7 +13,7 @@ class Search:
 	async def img(self, ctx, *, search):
 		"""
 		Gets an image based on search
-		Uses duckduckgo, returns a random image from the first page of results
+		Uses duckduckgo, returns a random image from the first 10 results
 		Usage:
 			{command_prefix}img cute dogs
 		"""
@@ -37,7 +37,7 @@ class Search:
 		requestUrl = 'https://duckduckgo.com/i.js'
 		r = requests.get(requestUrl, headers=headers, params=params)
 		data = json.loads(r.text)
-		url = (random.choice(data['results']))['image']
+		url = (random.choice(data['results'][:10]))['image']
 		print(url)
 		em = discord.Embed(title="Image search for: {}".format(search), description='{}\n{}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,url), colour=cfg.colors['green'])
 		em.set_image(url=url)
