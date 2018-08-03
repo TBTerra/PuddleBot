@@ -56,7 +56,7 @@ class Search:
 		for item in data['items']:
 			if item['id']['kind'] == 'youtube#video':
 				return await ctx.send('https://www.youtube.com/watch?v={}'.format(item['id']['videoId']))
-		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 
 def setup(bot):
 	bot.add_cog(Search(bot))

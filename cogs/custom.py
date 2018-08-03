@@ -80,16 +80,16 @@ class Custom:
 		"""
 		if ctx.message.mention_everyone:
 			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		elif len(output) > 1800:
 			em = discord.Embed(title="Error", description="The output is too long", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		elif command in self.bot.commands:
 			em = discord.Embed(title="Error", description="This is already the name of a built in command.", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		elif command not in self.cc:
 			em = discord.Embed(title="Error", description="Custom Command does not exist. Use add not edit.", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		##add the command to the custom list, then save the custom list
 		self.cc[command] = output
 		with open('cc.json','w') as f:
@@ -108,7 +108,7 @@ class Custom:
 		"""
 		if command not in self.cc:
 			em = discord.Embed(title="Error", description="Custom Command does not exist.\nHow am I supposed to remove it", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		##remove the command from the custom list, then save the custom list
 		del self.cc[command]
 		with open('cc.json','w') as f:
@@ -130,9 +130,9 @@ class Custom:
 	async def setpower(self, ctx, *, role: discord.Role = None):
 		""""set privilege level (bot owner only)"""
 		if role is None:
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou haven\'t specified a role!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou haven\'t specified a role!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 		if role not in ctx.message.guild.roles:
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 		cfg.bot['power-role'] = role.id
 		cfg.savecfg()
 
