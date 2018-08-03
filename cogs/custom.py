@@ -2,6 +2,7 @@ import discord
 from discord.ext.commands import group
 from discord.ext.commands import bot
 from discord.ext.commands import RoleConverter
+from discord.ext import commands
 import cfg
 import json
 
@@ -15,7 +16,7 @@ class Custom:
 		except:
 			self.cc = {}
 	
-	def user_has_power(self,ctx):
+	def user_has_power(ctx):
 		if ctx.message.author.id == cfg.bot['owner']: return True
 		#get the role with the right ID
 		for role in ctx.guild.roles:
@@ -41,6 +42,7 @@ class Custom:
 			return await ctx.send('Missing Argument')
 	
 	@custom.command()
+	@commands.check(user_has_power)
 	async def add(self, ctx, command, *, output):
 		"""
 		add a custom command (needs privilege)
@@ -48,20 +50,18 @@ class Custom:
 			{command_prefix}custom add test This as a test command.
 			will add the command 'test' with the reply of 'This as a test command.'
 		"""
-		if not self.user_has_power(ctx):
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if ctx.message.mention_everyone:
 			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		elif len(output) > 1800:
 			em = discord.Embed(title="Error", description="The output is too long", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		elif command in self.bot.commands:
 			em = discord.Embed(title="Error", description="This is already the name of a built in command.", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		elif command in self.cc:
 			em = discord.Embed(title="Error", description="Custom Command already exists. Use edit to change it, not add.", colour=cfg.colors['red'])
-			return await ctx.send(embed=em)
+			return await ctx.send(embed=em,delete_after=5)
 		##add the command to the custom list, then save the custom list
 		self.cc[command] = output
 		with open('cc.json','w') as f:
@@ -70,6 +70,7 @@ class Custom:
 		return await ctx.send(embed=em)
 	
 	@custom.command()
+	@commands.check(user_has_power)
 	async def edit(self, ctx, command, *, output):
 		"""
 		edit a custom command (needs privilege)
@@ -77,8 +78,6 @@ class Custom:
 			{command_prefix}custom edit test This as a test command.
 			will edit the command 'test' and change its reply to 'This as a test command.'
 		"""
-		if not self.user_has_power(ctx):
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if ctx.message.mention_everyone:
 			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em)
@@ -99,6 +98,7 @@ class Custom:
 		return await ctx.send(embed=em)
 	
 	@custom.command()
+	@commands.check(user_has_power)
 	async def remove(self, ctx, command):
 		"""
 		delete a custom command (needs privilege)
@@ -106,8 +106,6 @@ class Custom:
 			{command_prefix}custom remove test
 			will remove the command 'test'
 		"""
-		if not self.user_has_power(ctx):
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou don\'t have permission!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if command not in self.cc:
 			em = discord.Embed(title="Error", description="Custom Command does not exist.\nHow am I supposed to remove it", colour=cfg.colors['red'])
 			return await ctx.send(embed=em)
@@ -128,10 +126,9 @@ class Custom:
 		return await ctx.send(embed=em)
 	
 	@bot.command()
+	@commands.is_owner()
 	async def setpower(self, ctx, *, role: discord.Role = None):
 		""""set privilege level (bot owner only)"""
-		if ctx.message.author.id != cfg.bot['owner']:
-			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou arnt the bot owner!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if role is None:
 			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou haven\'t specified a role!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
 		if role not in ctx.message.guild.roles:
