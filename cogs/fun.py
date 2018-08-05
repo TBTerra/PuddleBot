@@ -8,7 +8,7 @@ class Fun:
 		self.bot = bot
 	
 	@bot.command()
-	async def hug(self, ctx, *, member: discord.Member = None):
+	async def hug(self, ctx, *, text=None):
 		"""
 		Hugs the mentioned user :3
 		Usage:
@@ -16,12 +16,17 @@ class Fun:
 			{command_prefix}hug
 			to hug self
 		"""
-		if not member:
+		if not text:
 			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
-		return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, member.nick if member.nick!=None else member.name))
+		if ctx.message.mentions:
+			for member in ctx.message.mentions:
+				await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, member.nick if member.nick!=None else member.name))
+			return
+		else:
+			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, text))
 
 	@bot.command(aliases=["headpat", "pet"])
-	async def pat(self, ctx, *, member: discord.Member = None):
+	async def pat(self, ctx, *, text=None):
 		"""
 		Gives headpats to the mentioned user :3
 		Usage:
@@ -29,9 +34,15 @@ class Fun:
 			{command_prefix}pat
 			to pat self
 		"""
-		if not member:
+		if not text:
 			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
-		return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, member.nick if member.nick!=None else member.name))
+		if ctx.message.mentions:
+			for member in ctx.message.mentions:
+				await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, member.nick if member.nick!=None else member.name))
+				return
+		else:
+			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, text))
+			
 	
 	@bot.command(aliases=["cf"])
 	async def coinflip(self, ctx):
