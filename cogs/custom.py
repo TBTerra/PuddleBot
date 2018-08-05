@@ -14,7 +14,8 @@ class Custom:
 			with open('cc.json') as f:
 				self.cc = json.load(f)
 		except:
-			self.cc = {}
+			self.cc = [{},{}]
+			print('no custom command list, making blank one')
 	
 	def user_has_power(ctx):
 		if ctx.message.author.id == cfg.bot['owner']: return True
@@ -31,8 +32,11 @@ class Custom:
 		msg = message.content.lower()
 		if msg.startswith(self.bot.command_prefix):
 			msg = msg[len(self.bot.command_prefix):]
-			if msg in self.cc:
-				return await message.channel.send(self.cc[msg])
+			if msg in self.cc[1]:
+				return await message.channel.send(self.cc[1][msg])
+		else:
+			if msg in self.cc[0]:
+				return await message.channel.send(self.cc[0][msg])
 		return
 	
 	@group(pass_context=True, aliases=["cc"])
@@ -49,21 +53,28 @@ class Custom:
 		Usage:
 			{command_prefix}custom add test This as a test command.
 			will add the command 'test' with the reply of 'This as a test command.'
+			adding a 0 to the end of the command will mean it does not require a prefix
 		"""
+		command = command.lower()
+		prefix = 1
+		if output[-1:] == '0':
+			prefix = 0
+			output = output[:-1]
+		
 		if ctx.message.mention_everyone:
 			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
 		elif len(output) > 1800:
 			em = discord.Embed(title="Error", description="The output is too long", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
-		elif command in self.bot.commands:
+		elif command in self.bot.commands and prefix==1:
 			em = discord.Embed(title="Error", description="This is already the name of a built in command.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
-		elif command in self.cc:
+		elif command in self.cc[0] or command in self.cc[1]:
 			em = discord.Embed(title="Error", description="Custom Command already exists. Use edit to change it, not add.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
 		##add the command to the custom list, then save the custom list
-		self.cc[command] = output
+		self.cc[prefix][command] = output
 		with open('cc.json','w') as f:
 			json.dump(self.cc,f)
 		em = discord.Embed(title="Done", description='{} has been added as a command'.format(command), colour=cfg.colors['green'])
@@ -87,11 +98,14 @@ class Custom:
 		elif command in self.bot.commands:
 			em = discord.Embed(title="Error", description="This is already the name of a built in command.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
-		elif command not in self.cc:
+		elif command not in self.cc[0] and command not in self.cc[1]:
 			em = discord.Embed(title="Error", description="Custom Command does not exist. Use add not edit.", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
 		##add the command to the custom list, then save the custom list
-		self.cc[command] = output
+		if command in self.cc[0]:
+			self.cc[0][command] = output
+		if command in self.cc[1]:
+			self.cc[1][command] = output
 		with open('cc.json','w') as f:
 			json.dump(self.cc,f)
 		em = discord.Embed(title="Done", description='{} has been updated'.format(command), colour=cfg.colors['green'])
@@ -106,11 +120,14 @@ class Custom:
 			{command_prefix}custom remove test
 			will remove the command 'test'
 		"""
-		if command not in self.cc:
+		if command not in self.cc[0] and command not in self.cc[1]:
 			em = discord.Embed(title="Error", description="Custom Command does not exist.\nHow am I supposed to remove it", colour=cfg.colors['red'])
 			return await ctx.send(embed=em,delete_after=5)
 		##remove the command from the custom list, then save the custom list
-		del self.cc[command]
+		if command in self.cc[0]:
+			del self.cc[0][command]
+		if command in self.cc[1]:
+			del self.cc[1][command]
 		with open('cc.json','w') as f:
 			json.dump(self.cc,f)
 		em = discord.Embed(title="Done", description='{} has been removed'.format(command), colour=cfg.colors['green'])
@@ -118,8 +135,11 @@ class Custom:
 	
 	@custom.command()
 	async def list(self, ctx):
-		list = ''
-		for key in self.cc.keys():
+		list = 'Comands with prefix:\n'
+		for key in self.cc[1].keys():
+			list += '{}\n'.format(key)
+		list += 'Comands without prefix:\n'
+		for key in self.cc[0].keys():
 			list += '{}\n'.format(key)
 		list=list[:-1]
 		em = discord.Embed(title="Custom Command list", description=list, colour=cfg.colors['blue'])
