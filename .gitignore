@@ -2,3 +2,5 @@
 
 config.json
 cc.json
+
+guess-data/*
