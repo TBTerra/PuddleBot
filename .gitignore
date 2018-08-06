@@ -2,5 +2,8 @@
 
 config.json
 cc.json
+hint.png
+overlay.png
+guess-state.json
 
 guess-data/*
