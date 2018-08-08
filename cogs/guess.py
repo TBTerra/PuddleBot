@@ -44,14 +44,17 @@ class Guess:
 	async def Correct(self,ctx):
 		##generate image with hint area highlighted
 		imgName = 'guess-data/{:04d}.png'.format(int(self.pages[self.state['curImg']][0][3:]))
-		original = Image.open(imgName)
-		draw = ImageDraw.Draw(original)
-		X = self.state['posX']
-		Y = self.state['posY']
-		draw.rectangle((X-(75+self.state['hintLV']),Y-(75+self.state['hintLV']),X+(76+self.state['hintLV']),Y+(76+self.state['hintLV'])),outline = '#CC0000')
-		original.save('overlay.png')
-		##output that
-		await ctx.send('That is correct',file=discord.File('overlay.png'))
+		try:
+			original = Image.open(imgName)
+			draw = ImageDraw.Draw(original)
+			X = self.state['posX']
+			Y = self.state['posY']
+			draw.rectangle((X-(75+self.state['hintLV']),Y-(75+self.state['hintLV']),X+(76+self.state['hintLV']),Y+(76+self.state['hintLV'])),outline = '#CC0000')
+			original.save('overlay.png')
+			##output that
+			await ctx.send('That is correct',file=discord.File('overlay.png'))
+		except:
+			await ctx.send('That is correct\nError unable to do overlay image')
 		##make a new hint
 		return await Guess.newPage(self,ctx)
 	
@@ -80,7 +83,7 @@ class Guess:
 			##output new hint
 			return await ctx.send('New Hint:', file=discord.File('hint.png'))
 		else:
-			return await ctx.send('It hasnt been 5 minutes, can\'t get a hint yet\ntime remaining ({})'.format(300-(time.time()-self.state['lastTime'])))
+			return await ctx.send('It hasnt been 5 minutes, can\'t get a hint yet\ntime remaining ({} seconds)'.format(int(300-(time.time()-self.state['lastTime']))))
 	@guess.command()
 	async def skip(self, ctx):
 		"""Skip to the next random page (only works after 1 hour)"""
@@ -89,7 +92,7 @@ class Guess:
 			##make a new page
 			return await Guess.newPage(self,ctx)
 		else:
-			return await ctx.send('It hasnt been an hour, can\'t skip yet',delete_after=10)
+			return await ctx.send('It hasnt been an hour, can\'t skip yet\ntime remaining ({} seconds)'.format(int(3600-(time.time()-self.state['lastTime']))))
 
 	@guess.command(aliases=["cur"])
 	async def current(self, ctx):
