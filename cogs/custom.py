@@ -29,14 +29,22 @@ class Custom:
 	async def on_message(self,message):
 		if message.author == self.bot.user:
 			return
+		if message.author.bot:
+			return
 		msg = message.content.lower()
 		if msg.startswith(self.bot.command_prefix):
 			msg = msg[len(self.bot.command_prefix):]
 			if msg in self.cc[1]:
-				return await message.channel.send(self.cc[1][msg])
+				if "{}" in self.cc[1][msg]:
+					return await message.channel.send(self.cc[1][msg].format(message.author.nick if message.author.nick!=None else message.author.name))
+				else:
+					return await message.channel.send(self.cc[1][msg])
 		else:
 			if msg in self.cc[0]:
-				return await message.channel.send(self.cc[0][msg])
+				if "{}" in self.cc[0][msg]:
+					return await message.channel.send(self.cc[0][msg].format(message.author.nick if message.author.nick!=None else message.author.name))
+				else:
+					return await message.channel.send(self.cc[0][msg])
 		return
 	
 	@group(pass_context=True, aliases=["cc"])
