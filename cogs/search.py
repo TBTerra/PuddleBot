@@ -13,35 +13,17 @@ class Search:
 	async def img(self, ctx, *, search):
 		"""
 		Gets an image based on search
-		Uses duckduckgo, returns a random image from the first 10 results
+		Uses Google, returns first result
 		Usage:
 			{command_prefix}img cute dogs
 		"""
-		r = requests.post('https://duckduckgo.com/', data={'q': search})
-		html = r.content
-		start = html.find(b'vqd=\'')
-		stop = html.find(b'\'',start+7)
-		vqd = html[start+5:stop]
-		print(vqd)
-		params = (('l', 'wt-wt'),('o', 'json'),('q', search),('vqd', vqd),('f', ',,,'),('p', '1'))
-		headers = {
-			'accept-encoding': 'gzip, deflate, br',
-			'x-requested-with': 'XMLHttpRequest',
-			'accept-language': 'en,en-US;q=0.9,de;q=0.8',
-			'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
-			'accept': 'application/json, text/javascript, */*; q=0.01',
-			'referer': 'https://duckduckgo.com/',
-			'authority': 'duckduckgo.com',
-			'scheme': 'https'
-		}
-		requestUrl = 'https://duckduckgo.com/i.js'
-		r = requests.get(requestUrl, headers=headers, params=params)
+		saniSearch = search.replace(' ','+')
+		r = requests.get('https://www.googleapis.com/customsearch/v1?q={}&cx=010484447505514448994%3Ahdizm3skfck&num=1&safe=active&searchType=image&key={}'.format(saniSearch,cfg.bot['img-api']))
 		data = json.loads(r.text)
-		url = (random.choice(data['results'][:10]))['image']
+		url = data['items'][0]['link']
 		print(url)
-		em = discord.Embed(title="Image search for: {}".format(search), description='{}\n{}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,url), colour=cfg.colors['green'])
+		em = discord.Embed(title="Image search for: {}".format(saniSearch), description='{}\n{}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,url), colour=cfg.colors['green'])
 		em.set_image(url=url)
-		em.set_thumbnail(url='https://duckduckgo.com/assets/logo_header.v107.min.png')
 		return await ctx.send(embed=em)
 	
 	@bot.command()
