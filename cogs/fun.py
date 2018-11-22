@@ -49,13 +49,15 @@ class Fun:
 		"""Flip a coin"""
 		return await ctx.send("The coin landed on {}!".format(random.choice(["heads", "tails"])))
 	
-	@bot.command()
+	@bot.command(aliases=["aesthetic"])
 	async def aesthetics(self, ctx, *, convert):
 		"""Converts text to be more  a e s t h e t i c s"""
 		wide_map = dict((i, i + 0xFEE0) for i in range(0x21, 0x7F))  # Create dict with fixed width equivalents for chars
 		wide_map[0x20] = 0x3000  # replace space with 'IDEOGRAPHIC SPACE'
 		converted = str(convert).translate(wide_map)
-		return await ctx.send(converted)
+		converted = '{} : {}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,converted)
+		await ctx.send(converted)
+		return await ctx.message.delete()
 
 	@bot.command()
 	async def roll(self, ctx, *, expression=""):
