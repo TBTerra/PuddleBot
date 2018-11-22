@@ -2158,7 +2158,10 @@
 		"1081" : ["Guest Rain Delay: TTSEAT p.3", "1081", "2643249/guest-rain-delay-ttseat-p-3/", "Guest-Rain-Delay-TTSEAT-p-3-754307572"],
 		"1082" : ["Guest Rain Delay: TTSEAT p.4", "1082", "2646614/guest-rain-delay-ttseat-p-4/", "Guest-Rain-Delay-TTSEAT-p-4-755442241"],
 		"1083" : ["Cloyster", "1083", "2649012/cloyster/", "Cloyster-756391351"],
-		"1084" : ["Guest Rain Delay: TTSEAT p.5", "1084", "2649299/guest-rain-delay-ttseat-p-5/", "Guest-Rain-Delay-TTSEAT-p-5-756535762"]
+		"1084" : ["Guest Rain Delay: TTSEAT p.5", "1084", "2649299/guest-rain-delay-ttseat-p-5/", "Guest-Rain-Delay-TTSEAT-p-5-756535762"],
+		"1085" : ["Guest Rain Delay: TTSEAT p.6", "1085", "2652265/guest-rain-delay-ttseat-p-6/", "Guest-Rain-Delay-TTSEAT-p-6-757730206"],
+		"1086" : ["Chapter E Preview", "1086", "2653366/chapter-e-preview/", "Rain-Chapter-E-Preview-758135637"],
+		"1087" : ["Guest Rain Delay: TTSEAT p.7", "1087", "2655919/guest-rain-delay-ttseat-p-7/", "Guest-Rain-Delay-TTSEAT-p-7-758941557"]
 	},
 	"SJ" : {
 		"1" : ["RAIN", "1", "1046129/rain/", "RAIN-187720017"],
@@ -3241,6 +3244,9 @@
 		"1078" : ["Guest Rain Delay: TTSEAT p.3", "1081", "2643249/guest-rain-delay-ttseat-p-3/", "Guest-Rain-Delay-TTSEAT-p-3-754307572"],
 		"1079" : ["Guest Rain Delay: TTSEAT p.4", "1082", "2646614/guest-rain-delay-ttseat-p-4/", "Guest-Rain-Delay-TTSEAT-p-4-755442241"],
 		"1080" : ["Cloyster", "1083", "2649012/cloyster/", "Cloyster-756391351"],
-		"1081" : ["Guest Rain Delay: TTSEAT p.5", "1084", "2649299/guest-rain-delay-ttseat-p-5/", "Guest-Rain-Delay-TTSEAT-p-5-756535762"]
+		"1081" : ["Guest Rain Delay: TTSEAT p.5", "1084", "2649299/guest-rain-delay-ttseat-p-5/", "Guest-Rain-Delay-TTSEAT-p-5-756535762"],
+		"1082" : ["Guest Rain Delay: TTSEAT p.6", "1085", "2652265/guest-rain-delay-ttseat-p-6/", "Guest-Rain-Delay-TTSEAT-p-6-757730206"],
+		"1083" : ["Chapter E Preview", "1086", "2653366/chapter-e-preview/", "Rain-Chapter-E-Preview-758135637"],
+		"1084" : ["Guest Rain Delay: TTSEAT p.7", "1087", "2655919/guest-rain-delay-ttseat-p-7/", "Guest-Rain-Delay-TTSEAT-p-7-758941557"]
 	}
 }
