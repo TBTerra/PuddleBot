@@ -2,6 +2,8 @@ import requests
 import json
 import random
 import discord
+import xml.etree.ElementTree as ET
+import urllib
 from discord.ext import commands
 import cfg
 
@@ -38,6 +40,30 @@ class Search:
 		for item in data['items']:
 			if item['id']['kind'] == 'youtube#video':
 				return await ctx.send('https://www.youtube.com/watch?v={}'.format(item['id']['videoId']))
+		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.display_name),delete_after=5)
+	
+	@commands.command()
+	async def wa(self, ctx, *, search):
+		"""
+		Runs a query trough WolframAlpha
+		Usage:
+			{command_prefix}wa 110kph in imperial
+		"""
+		r = requests.get('http://api.wolframalpha.com/v2/query?{}'.format(urllib.parse.urlencode({'appid': cfg.bot['wa-api'], 'input': search})))
+		root = ET.fromstring(r.text)
+		primaryPod = None
+		for pod in root.iter('pod'):
+			try:
+				if pod.attrib['primary'] == 'true':
+					primaryPod = pod
+					break
+			except:
+				pass
+		if primaryPod:
+			plaintext = []
+			for ptEl in primaryPod.iter('plaintext'):
+				plaintext.append(ptEl.text)
+			return await ctx.send('**Result:**\n'+'\n\n'.join(plaintext))
 		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 
 def setup(bot):
