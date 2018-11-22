@@ -2,14 +2,14 @@ import requests
 import json
 import random
 import discord
-from discord.ext.commands import bot
+from discord.ext import commands
 import cfg
 
 class Search:
 	def __init__(self, bot):
 		self.bot = bot
 	
-	@bot.command()
+	@commands.command()
 	async def img(self, ctx, *, search):
 		"""
 		Gets an image based on search
@@ -26,7 +26,7 @@ class Search:
 		em.set_image(url=url)
 		return await ctx.send(embed=em)
 	
-	@bot.command()
+	@commands.command()
 	async def yt(self, ctx, *, search):
 		"""
 		Gets a youtube video based on search

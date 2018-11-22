@@ -1,6 +1,5 @@
 import discord
 from discord.ext.commands import group
-from discord.ext.commands import bot
 from discord.ext import commands
 import asyncio
 import requests

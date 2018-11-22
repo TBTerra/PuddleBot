@@ -1,13 +1,13 @@
 import discord
 import random
 import re
-from discord.ext.commands import bot
+from discord.ext import commands
 
 class Fun:
 	def __init__(self, bot):
 		self.bot = bot
 	
-	@bot.command()
+	@commands.command()
 	async def hug(self, ctx, *, text=None):
 		"""
 		Hugs the mentioned user :3
@@ -25,7 +25,7 @@ class Fun:
 		else:
 			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, text))
 
-	@bot.command(aliases=["headpat", "pet"])
+	@commands.command(aliases=["headpat", "pet"])
 	async def pat(self, ctx, *, text=None):
 		"""
 		Gives headpats to the mentioned user :3
@@ -44,12 +44,12 @@ class Fun:
 			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, text))
 			
 	
-	@bot.command(aliases=["cf"])
+	@commands.command(aliases=["cf"])
 	async def coinflip(self, ctx):
 		"""Flip a coin"""
 		return await ctx.send("The coin landed on {}!".format(random.choice(["heads", "tails"])))
 	
-	@bot.command(aliases=["aesthetic"])
+	@commands.command(aliases=["aesthetic"])
 	async def aesthetics(self, ctx, *, convert):
 		"""Converts text to be more  a e s t h e t i c s"""
 		wide_map = dict((i, i + 0xFEE0) for i in range(0x21, 0x7F))  # Create dict with fixed width equivalents for chars
@@ -59,7 +59,7 @@ class Fun:
 		await ctx.send(converted)
 		return await ctx.message.delete()
 
-	@bot.command()
+	@commands.command()
 	async def roll(self, ctx, *, expression=""):
 		"""
 		Rolls a die using dice expression format.

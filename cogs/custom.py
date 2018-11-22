@@ -1,6 +1,5 @@
 import discord
 from discord.ext.commands import group
-from discord.ext.commands import bot
 from discord.ext.commands import RoleConverter
 from discord.ext import commands
 import cfg
@@ -153,7 +152,7 @@ class Custom:
 		em = discord.Embed(title="Custom Command list", description=list, colour=cfg.colors['blue'])
 		return await ctx.send(embed=em)
 	
-	@bot.command()
+	@commands.command()
 	@commands.is_owner()
 	async def setpower(self, ctx, *, role: discord.Role = None):
 		""""set privilege level (bot owner only)"""
