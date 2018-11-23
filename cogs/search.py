@@ -24,7 +24,7 @@ class Search:
 		data = json.loads(r.text)
 		url = data['items'][0]['link']
 		print(url)
-		em = discord.Embed(title="Image search for: {}".format(saniSearch), description='{}\n{}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,url), colour=cfg.colors['green'])
+		em = discord.Embed(title="Image search for: {}".format(saniSearch), description='{}\n{}'.format(ctx.author.display_name,url), colour=cfg.colors['green'])
 		em.set_image(url=url)
 		return await ctx.send(embed=em)
 	
@@ -64,7 +64,7 @@ class Search:
 			for ptEl in primaryPod.iter('plaintext'):
 				plaintext.append(ptEl.text)
 			return await ctx.send('**Result:**\n'+'\n\n'.join(plaintext))
-		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
+		return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nSomething went wrong'.format(ctx.author.display_name),delete_after=5)
 
 def setup(bot):
 	bot.add_cog(Search(bot))

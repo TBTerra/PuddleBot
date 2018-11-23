@@ -8,7 +8,7 @@ class Test:
 	
 	@commands.command()
 	async def say(self, ctx, *, text):
-		return await ctx.send('{}: {}'.format(ctx.author,text))
+		return await ctx.send('{}: {}'.format(ctx.author.display_name,text))
 	
 	@commands.command()
 	async def yes(self, ctx):

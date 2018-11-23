@@ -17,13 +17,13 @@ class Fun:
 			to hug self
 		"""
 		if not text:
-			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, ctx.author.display_name))
 		if ctx.message.mentions:
 			for member in ctx.message.mentions:
-				await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, member.nick if member.nick!=None else member.name))
+				await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, member.display_name))
 			return
 		else:
-			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.name, text))
+			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, text))
 
 	@commands.command(aliases=["headpat", "pet"])
 	async def pat(self, ctx, *, text=None):
@@ -35,13 +35,13 @@ class Fun:
 			to pat self
 		"""
 		if not text:
-			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, ctx.author.nick if ctx.author.nick!=None else ctx.author.name))
+			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.display_name, ctx.author.display_name))
 		if ctx.message.mentions:
 			for member in ctx.message.mentions:
-				await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, member.nick if member.nick!=None else member.name))
+				await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.display_name, member.display_name))
 				return
 		else:
-			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.name, text))
+			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.display_name, text))
 			
 	
 	@commands.command(aliases=["cf"])
@@ -55,7 +55,7 @@ class Fun:
 		wide_map = dict((i, i + 0xFEE0) for i in range(0x21, 0x7F))  # Create dict with fixed width equivalents for chars
 		wide_map[0x20] = 0x3000  # replace space with 'IDEOGRAPHIC SPACE'
 		converted = str(convert).translate(wide_map)
-		converted = '{} : {}'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name,converted)
+		converted = '{} : {}'.format(ctx.author.display_name,converted)
 		await ctx.send(converted)
 		return await ctx.message.delete()
 
