@@ -35,7 +35,7 @@ class Custom:
 			msg = msg[len(self.bot.command_prefix):]
 			if msg in self.cc[1]:
 				if "{}" in self.cc[1][msg]:
-					return await message.channel.send(self.cc[1][msg].format(message.authordisplay_name))
+					return await message.channel.send(self.cc[1][msg].format(message.author.display_name))
 				else:
 					return await message.channel.send(self.cc[1][msg])
 		else:
