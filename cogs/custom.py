@@ -46,6 +46,12 @@ class Custom:
 					return await message.channel.send(self.cc[0][msg])
 		return
 	
+	async def on_command_error(self, ctx, error):
+		if isinstance(error, commands.CommandNotFound):
+			if ctx.message.content[len(self.bot.command_prefix):] in self.cc[1]:
+				return
+		raise error
+	
 	@group(pass_context=True, aliases=["cc"])
 	async def custom(self, ctx):
 		"""A group of commands to manage custom commands for your server."""
