@@ -50,6 +50,9 @@ class Custom:
 		if isinstance(error, commands.CommandNotFound):
 			if ctx.message.content[len(self.bot.command_prefix):] in self.cc[1]:
 				return
+			else:
+				print('{} does not exist as a command'.format(ctx.message.content[len(self.bot.command_prefix):]))
+				return
 		raise error
 	
 	@group(pass_context=True, aliases=["cc"])
