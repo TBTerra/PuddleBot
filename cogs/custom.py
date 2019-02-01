@@ -168,6 +168,13 @@ class Custom:
 			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 		cfg.bot['power-role'] = role.id
 		cfg.savecfg()
+		
+	
+	@commands.command()
+	@commands.is_owner()
+	async def say(self, ctx, *, convert):
+		await ctx.send(convert)
+		return await ctx.message.delete()
 
 def setup(bot):
 	bot.add_cog(Custom(bot))
