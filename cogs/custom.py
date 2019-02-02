@@ -54,8 +54,6 @@ class Custom:
 			if msg in self.cc[1]:
 				return await message.channel.send(self.addFormat(message.author,self.cc[1][msg],''))
 			if msg in self.cc[2]:
-				print(msg)
-				print(self.cc[2][msg])
 				if self.cc[2][msg] in self.cc[1]:
 					return await message.channel.send(self.addFormat(message.author,self.cc[1][self.cc[2][msg]],''))
 				else:
@@ -202,15 +200,14 @@ class Custom:
 	
 	@custom.command()
 	async def list(self, ctx):
-		list = 'Comands with prefix:\n'
+		list = 'Comands with prefix:```'
 		for key in self.cc[1].keys():
-			list += '`{}`\n'.format(key)
-		list += 'Comands without prefix:\n'
+			list += '{}\n'.format(key)
+		list = list[:-1] + '```\nComands without prefix:\n```'
 		for key in self.cc[0].keys():
-			list += '`{}`\n'.format(key)
-		list=list[:-1]
-		em = discord.Embed(title="Custom Command list", description=list, colour=cfg.colors['blue'])
-		return await ctx.send(embed=em)
+			list += '{}\n'.format(key)
+		list = list[:-1] + '```'
+		return await ctx.send(list)
 	
 	@commands.command()
 	@commands.is_owner()
