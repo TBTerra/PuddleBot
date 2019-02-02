@@ -35,7 +35,7 @@ class Custom:
 				break
 		a = len(format)
 		if a>0:
-			return format, text[len(format):-len(format)]
+			return format, msg[a:-a]
 		else:
 			return '', text
 	
