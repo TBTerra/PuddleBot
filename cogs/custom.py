@@ -61,7 +61,7 @@ class Custom:
 				if self.cc[2][msg] in self.cc[1]:
 					return await message.channel.send(self.addFormat(message.author,self.cc[1][self.cc[2][msg]],''))
 				else:
-					return await message.channel.send(self.addFormat(message.author,self.cc[1][msg],''))
+					return await message.channel.send(self.addFormat(message.author,self.cc[2][msg],''))
 		else:
 			form,msg = self.stripFormat(msg)
 			if msg in self.cc[0]:
