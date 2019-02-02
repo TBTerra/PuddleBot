@@ -2,6 +2,7 @@ import discord
 from discord.ext.commands import group
 from discord.ext.commands import RoleConverter
 from discord.ext import commands
+import random
 import cfg
 import json
 
@@ -39,10 +40,13 @@ class Custom:
 		else:
 			return '', text
 	def addFormat(self,owner,msg,format):
-		if '{}' in msg:
-			response = response.format(owner.display_name)
+		if ';;' in msg:
+			choices = msg.split(';;')
+			response = random.choice(choices)
 		else:
 			response = msg
+		if '{}' in msg:
+			response = response.format(owner.display_name)
 		return format + response + format[::-1]
 	
 	async def on_message(self,message):
