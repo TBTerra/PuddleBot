@@ -24,6 +24,20 @@ class Custom:
 				if ctx.message.author.top_role >= role:
 					return True
 		return False
+		
+	def stripFormat(self,text):
+		format = ''
+		#start from be begining and strip chars that can be formating
+		for chr in text:
+			if chr in {'_','*','|','~'}:
+				format = format + chr
+			else:
+				break
+		a = len(format)
+		if a>0:
+			return format, text[len(format):-len(format)]
+		else:
+			return '', text
 	
 	async def on_message(self,message):
 		if message.author == self.bot.user:
@@ -32,18 +46,21 @@ class Custom:
 			return
 		msg = message.content.lower()
 		if msg.startswith(self.bot.command_prefix):
-			msg = msg[len(self.bot.command_prefix):]
 			if msg in self.cc[1]:
 				if "{}" in self.cc[1][msg]:
-					return await message.channel.send(self.cc[1][msg].format(message.author.display_name))
+					response = self.cc[1][msg].format(message.author.display_name)
 				else:
-					return await message.channel.send(self.cc[1][msg])
+					response = self.cc[1][msg]
+				return await message.channel.send(response)
 		else:
+			form,msg = self.stripFormat(msg)
 			if msg in self.cc[0]:
 				if "{}" in self.cc[0][msg]:
-					return await message.channel.send(self.cc[0][msg].format(message.author.display_name))
+					response = self.cc[0][msg].format(message.author.display_name)
 				else:
-					return await message.channel.send(self.cc[0][msg])
+					response = self.cc[0][msg]
+				response = form + response.rstrip() + form[::-1]
+				return await message.channel.send(response)
 		return
 	
 	async def on_command_error(self, ctx, error):
@@ -73,9 +90,9 @@ class Custom:
 		"""
 		command = command.lower()
 		prefix = 1
-		if output[-1:] == '0':
+		if output[-1] == '0':
 			prefix = 0
-			output = output[:-1]
+			output = output[:-0].rstrip()
 		
 		if ctx.message.mention_everyone:
 			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
