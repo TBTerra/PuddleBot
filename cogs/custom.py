@@ -40,8 +40,6 @@ class Custom:
 			return '', text
 	
 	async def on_message(self,message):
-		if message.author == self.bot.user:
-			return
 		if message.author.bot:
 			return
 		msg = message.content.lower()
