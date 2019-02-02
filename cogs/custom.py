@@ -200,7 +200,7 @@ class Custom:
 	
 	@custom.command()
 	async def list(self, ctx):
-		list = 'Comands with prefix:```'
+		list = 'Comands with prefix:\n```'
 		for key in self.cc[1].keys():
 			list += '{}\n'.format(key)
 		list = list[:-1] + '```\nComands without prefix:\n```'
