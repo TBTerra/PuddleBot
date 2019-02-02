@@ -13,7 +13,7 @@ class Custom:
 			with open('cc.json') as f:
 				self.cc = json.load(f)
 		except:
-			self.cc = [{},{}]
+			self.cc = [{},{},{}]
 			print('no custom command list, making blank one')
 	
 	def user_has_power(ctx):
@@ -38,32 +38,38 @@ class Custom:
 			return format, msg[a:-a]
 		else:
 			return '', text
+	def addFormat(self,owner,msg,format):
+		if '{}' in msg:
+			response = response.format(owner.display_name)
+		else:
+			response = msg
+		return format + response + format[::-1]
 	
 	async def on_message(self,message):
 		if message.author.bot:
 			return
 		msg = message.content.lower()
 		if msg.startswith(self.bot.command_prefix):
+			msg = msg[len(self.bot.command_prefix):]
 			if msg in self.cc[1]:
-				if "{}" in self.cc[1][msg]:
-					response = self.cc[1][msg].format(message.author.display_name)
+				return await message.channel.send(self.addFormat(message.author,self.cc[1][msg],''))
+			if msg in self.cc[2]:
+				print(msg)
+				print(self.cc[2][msg])
+				if self.cc[2][msg] in self.cc[1]:
+					return await message.channel.send(self.addFormat(message.author,self.cc[1][self.cc[2][msg]],''))
 				else:
-					response = self.cc[1][msg]
-				return await message.channel.send(response)
+					return await message.channel.send(self.addFormat(message.author,self.cc[1][msg],''))
 		else:
 			form,msg = self.stripFormat(msg)
 			if msg in self.cc[0]:
-				if "{}" in self.cc[0][msg]:
-					response = self.cc[0][msg].format(message.author.display_name)
-				else:
-					response = self.cc[0][msg]
-				response = form + response.rstrip() + form[::-1]
-				return await message.channel.send(response)
+				return await message.channel.send(self.addFormat(message.author,self.cc[0][msg],form))
 		return
 	
 	async def on_command_error(self, ctx, error):
 		if isinstance(error, commands.CommandNotFound):
-			if ctx.message.content[len(self.bot.command_prefix):] in self.cc[1]:
+			cmd = ctx.message.content[len(self.bot.command_prefix):]
+			if cmd in self.cc[1] or cmd in self.cc[2]:
 				return
 			else:
 				print('{} does not exist as a command'.format(ctx.message.content[len(self.bot.command_prefix):]))
@@ -110,6 +116,36 @@ class Custom:
 			json.dump(self.cc,f)
 		em = discord.Embed(title="Done", description='{} has been added as a command'.format(command), colour=cfg.colors['green'])
 		return await ctx.send(embed=em)
+	
+	@custom.command()
+	@commands.check(user_has_power)
+	async def alias(self, ctx, command, *, output):
+		"""
+		make an alias for a costom command (needs privilege)
+		Usage:
+			{command_prefix}custom alias test2 test
+			will add the command 'test2' as an alias of the custom command called test.
+			if test does not exist, it will add test2 as a hidden command with the response of "test"
+			Warning: still in testing, edit and remove may not work on aliased commands
+		"""
+		if ctx.message.mention_everyone:
+			em = discord.Embed(title="Error", description="Custom Commands cannot mention everyone.", colour=cfg.colors['red'])
+			return await ctx.send(embed=em,delete_after=5)
+		elif len(output) > 1800:
+			em = discord.Embed(title="Error", description="The output is too long", colour=cfg.colors['red'])
+			return await ctx.send(embed=em,delete_after=5)
+		elif command in self.bot.commands:
+			em = discord.Embed(title="Error", description="This is already the name of a built in command.", colour=cfg.colors['red'])
+			return await ctx.send(embed=em,delete_after=5)
+		elif command in self.cc[0] or command in self.cc[1]:
+			em = discord.Embed(title="Error", description="Custom Command already exists. cant make an alias of the same name.", colour=cfg.colors['red'])
+			return await ctx.send(embed=em,delete_after=5)
+		##check if its an alias or a hidden command
+		self.cc[2][command] = output
+		with open('cc.json','w') as f:
+			json.dump(self.cc,f)
+		em = discord.Embed(title="Done", description='{} has been added.'.format(command), colour=cfg.colors['green'])
+		return await ctx.send(embed=em,delete_after=15)
 	
 	@custom.command()
 	@commands.check(user_has_power)
@@ -168,10 +204,10 @@ class Custom:
 	async def list(self, ctx):
 		list = 'Comands with prefix:\n'
 		for key in self.cc[1].keys():
-			list += '{}\n'.format(key)
+			list += '`{}`\n'.format(key)
 		list += 'Comands without prefix:\n'
 		for key in self.cc[0].keys():
-			list += '{}\n'.format(key)
+			list += '`{}`\n'.format(key)
 		list=list[:-1]
 		em = discord.Embed(title="Custom Command list", description=list, colour=cfg.colors['blue'])
 		return await ctx.send(embed=em)
