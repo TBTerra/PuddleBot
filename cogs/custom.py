@@ -36,7 +36,7 @@ class Custom:
 				break
 		a = len(format)
 		if a>0:
-			return format, msg[a:-a]
+			return format, text[a:-a]
 		else:
 			return '', text
 	def addFormat(self,owner,msg,format):
