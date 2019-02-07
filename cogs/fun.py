@@ -31,14 +31,13 @@ class Fun:
 			if r == None:
 				return await ctx.send("I'm sorry {} But Hug someone is not set-up on this server.".format(ctx.author.display_name))
 			else:
-				resp = ''
 				#is the caller in the role
 				#if "role_id" in [y.id for y in author.roles]:
 				if r not in ctx.author.roles:
-					resp = 'Note: This Hugs a random person with the `{}` role. You don\'t seem to have it, so consider applying the role to yourself\n'.format(r.name)
+					await ctx.send('Note: This Hugs a random person with the `{}` role. You don\'t seem to have it, so consider applying the role to yourself\n'.format(r.name),delete_after=30)
 				#select somone randomly from the role
 				huggee = random.choice(r.members)
-				return await ctx.send("{}:blush: *{} hugs {}*".format(resp,self.bot.user.display_name, huggee.mention))
+				return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, huggee.mention))
 		else:
 			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, text))
 
