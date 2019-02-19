@@ -25,7 +25,8 @@ class Dev:
 			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou haven\'t specified a role!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 		if role not in ctx.message.guild.roles:
 			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
-		return await ctx.send('That Role has the ID: {} and has {} members'.format(role.id, len(role.members)))
+		await ctx.send('That Role has the ID: {} and has {} members'.format(role.id, len(role.members)),delete_after=15)
+		return await ctx.message.delete()
 
 	@commands.command()
 	@commands.is_owner()
