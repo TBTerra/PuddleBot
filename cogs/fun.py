@@ -8,7 +8,7 @@ class Fun:
 	def __init__(self, bot):
 		self.bot = bot
 	
-	@commands.command()
+	@commands.command(aliases=["hugs"])
 	async def hug(self, ctx, *, text=None):
 		"""
 		Hugs the mentioned user :3
