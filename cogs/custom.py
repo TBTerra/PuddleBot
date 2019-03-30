@@ -25,7 +25,22 @@ class Custom:
 				if ctx.message.author.top_role >= role:
 					return True
 		return False
-		
+
+	def stripPunc(self,text):
+		#out = ''
+		#for chr in text:
+		#	if chr not in {'.',',','?',':',';','\'','\"','!'}:
+		#		out = out + chr
+		#return out
+		a=0
+		for chr in reversed(text):
+			if chr in {'.',',','?',':',';','\'','\"','!'}:
+				a += 1
+			else:
+				break
+		if a>0:
+			return text[:-a]
+		return text
 	def stripFormat(self,text):
 		format = ''
 		#start from be begining and strip chars that can be formating
@@ -36,9 +51,9 @@ class Custom:
 				break
 		a = len(format)
 		if a>0:
-			return format, text[a:-a]
+			return format, self.stripPunc(text[a:-a])
 		else:
-			return '', text
+			return '', self.stripPunc(text)
 	def addFormat(self,owner,msg,format):
 		if ';;' in msg:
 			choices = msg.split(';;')
