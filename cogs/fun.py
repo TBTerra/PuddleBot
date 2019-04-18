@@ -58,6 +58,24 @@ class Fun:
 				return
 		else:
 			return await ctx.send("Nyaa! :3 *{} gives headpats to {}*".format(self.bot.user.display_name, text))
+
+	@commands.command()
+	async def cute(self, ctx, *, text=None):
+		"""
+		Tells the mentioned user that they are cute
+		Usage:
+			{command_prefix}cute @PuddleBot#4998
+			{command_prefix}cute
+			to get self cuteness confirmed
+		"""
+		if not text:
+			return await ctx.send(":kissing_heart: *{} Thinks {} is cute*".format(self.bot.user.display_name, ctx.author.display_name))
+		if ctx.message.mentions:
+			for member in ctx.message.mentions:
+				await ctx.send(":kissing_heart: *{} Thinks {} is cute, and {} agrees*".format(ctx.author.display_name, member.display_name, self.bot.user.display_name))
+				return
+		else:
+			return await ctx.send(":kissing_heart: *{} Thinks {} is cute, and {} agrees*".format(ctx.author.display_name, text, self.bot.user.display_name))
 			
 	
 	@commands.command(aliases=["cf"])
