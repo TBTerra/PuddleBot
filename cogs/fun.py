@@ -69,13 +69,13 @@ class Fun:
 			to get self cuteness confirmed
 		"""
 		if not text:
-			return await ctx.send(":kissing_heart: *{} Thinks {} is cute*".format(self.bot.user.display_name, ctx.author.display_name))
+			return await ctx.send(":kissing_heart: *{} thinks {} is cute*".format(self.bot.user.display_name, ctx.author.display_name))
 		if ctx.message.mentions:
 			for member in ctx.message.mentions:
-				await ctx.send(":kissing_heart: *{} Thinks {} is cute, and {} agrees*".format(ctx.author.display_name, member.display_name, self.bot.user.display_name))
+				await ctx.send(":kissing_heart: *{} thinks {} is cute, and {} agrees*".format(ctx.author.display_name, member.display_name, self.bot.user.display_name))
 				return
 		else:
-			return await ctx.send(":kissing_heart: *{} Thinks {} is cute, and {} agrees*".format(ctx.author.display_name, text, self.bot.user.display_name))
+			return await ctx.send(":kissing_heart: *{} thinks {} is cute, and {} agrees*".format(ctx.author.display_name, text, self.bot.user.display_name))
 			
 	
 	@commands.command(aliases=["cf"])
