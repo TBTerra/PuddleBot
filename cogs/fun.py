@@ -76,7 +76,24 @@ class Fun:
 				return
 		else:
 			return await ctx.send(":kissing_heart: *{} thinks {} is cute, and {} agrees*".format(ctx.author.display_name, text, self.bot.user.display_name))
-			
+	
+	@commands.command(aliases=["boops"])
+	async def boop(self, ctx, *, text=None):
+		"""
+		Gives boops to the mentioned user :3
+		Usage:
+			{command_prefix}boop @PuddleBot#4998
+			{command_prefix}boop
+			to boop self
+		"""
+		if not text:
+			return await ctx.send("**Boop!** <:PuddleStreeeetch:381984932723032065> *{} boops {}*".format(self.bot.user.display_name, ctx.author.display_name))
+		if ctx.message.mentions:
+			for member in ctx.message.mentions:
+				await ctx.send("**Boop!** <:PuddleStreeeetch:381984932723032065> *{} boops {}*".format(self.bot.user.display_name, member.display_name))
+				return
+		else:
+			return await ctx.send("**Boop!** <:PuddleStreeeetch:381984932723032065> *{} boops {}*".format(self.bot.user.display_name, text))
 	
 	@commands.command(aliases=["cf"])
 	async def coinflip(self, ctx):
