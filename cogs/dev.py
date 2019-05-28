@@ -27,6 +27,16 @@ class Dev:
 			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nThat role dosnt exist!'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
 		await ctx.send('That Role has the ID: {} and has {} members'.format(role.id, len(role.members)),delete_after=15)
 		return await ctx.message.delete()
+	
+	@commands.command()
+	@commands.is_owner()
+	async def raw(self, ctx, *, text=None):
+		"""grabs the raw data of the entered thing (bot owner only)"""
+		if text is None:
+			return await ctx.send('I\'m sorry {}. I\'m afraid I can\'t do that :confused:\nYou you don\'t seem to have said anything'.format(ctx.author.nick if ctx.author.nick!=None else ctx.author.name),delete_after=5)
+		text = '\\' + text
+		await ctx.send('Your raw is: {}'.format(text),delete_after=15)
+		return await ctx.message.delete()
 
 	@commands.command()
 	@commands.is_owner()
