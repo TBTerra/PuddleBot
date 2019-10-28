@@ -17,7 +17,7 @@ class Guess:
 				self.state = json.load(f)
 		except:
 			print('no game state, making blank one')
-			self.state = {'curImg':0,'lastTime':0,'posX':-1, 'posY':-1, 'hintLV':0}
+			self.state = {'curImg':0,'lastTime':0,'posX':-1, 'posY':-1, 'hintLV':0, 'scores':{}}
 
 	async def newPage(self,ctx):
 		##choose a new page
@@ -34,7 +34,7 @@ class Guess:
 		##generate crop
 		original.crop((X-75,Y-75,X+76,Y+76)).save("hint.png")
 		##update/save gamestate
-		self.state = {'curImg':imgNum,'lastTime':time.time(),'posX':X, 'posY':Y, 'hintLV':0}
+		self.state = {'curImg':imgNum,'lastTime':time.time(),'posX':X, 'posY':Y, 'hintLV':0, 'scores':self.state['scores']}
 		with open('guess-state.json','w') as f:
 			json.dump(self.state,f)
 		##output new hint
@@ -50,8 +50,15 @@ class Guess:
 			Y = self.state['posY']
 			draw.rectangle((X-(75+self.state['hintLV']),Y-(75+self.state['hintLV']),X+(76+self.state['hintLV']),Y+(76+self.state['hintLV'])),outline = '#CC0000')
 			original.save('overlay.png')
-			##output that
-			await ctx.send('That is correct',file=discord.File('overlay.png'))
+			#update score
+			winner = str(ctx.author.id)
+			if winner in self.state['scores']:
+				self.state['scores'][winner] += 1
+			else:
+				self.state['scores'][winner] = 1
+			score = self.state['scores'][winner]
+			##output all that
+			await ctx.send('That is correct. {} is now at a score of {}'.format(ctx.author.display_name,score),file=discord.File('overlay.png'))
 		except:
 			await ctx.send('That is correct\nError unable to do overlay image')
 		##make a new hint
@@ -136,6 +143,14 @@ class Guess:
 			return await Guess.Correct(self,ctx)
 		else:
 			return await ctx.send('Thats not correct',delete_after=10)
+	
+	@guess.command(aliases=["score","hs"])
+	async def highscore(self, ctx):
+		text = 'Rain Guess Highscores:'
+		for key, value in sorted(self.state['scores'].items(), key=lambda item: item[1], reverse=True)[:9]:
+			ppl = await self.bot.get_user_info(key)
+			text = text + '\n{}:\t{}'.format(ppl.display_name,value)
+		return await ctx.send(text)
 
 def setup(bot):
 	bot.add_cog(Guess(bot))
