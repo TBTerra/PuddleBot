@@ -41,7 +41,7 @@ class Fun:
 		else:
 			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, text))
 
-	@commands.command(aliases=["headpat", "pet"])
+	@commands.command(aliases=["headpat", "pet", "pats", "pets"])
 	async def pat(self, ctx, *, text=None):
 		"""
 		Gives headpats to the mentioned user :3
