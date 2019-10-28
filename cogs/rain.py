@@ -5,16 +5,59 @@ import asyncio
 import requests
 import cfg
 import json
+import re
+import time
+
+makeNull = re.compile('[,.?!"\';:&]|<b>|</b>|<i>|</i>')
+nameNull = re.compile('[,.?!"\';:&]|\(.*\)')
+makeSpace = {'\n','  ','  '}## th replacing double space with space, twice is to remove multi spaces where there was a situation of [space][punctuation][space]
+
+def stipPunc(t):
+	t=t.lower()
+	t=makeNull.sub('', t)
+	for c in makeSpace:#this is slow
+		t=t.replace(c,' ')
+	return t
+	
+def stripName(t):
+	t=t.lower()
+	t=nameNull.sub('', t)
+	t=t.replace('  ',' ')
+	return t
 
 class Rain:
 	def __init__(self, bot):
 		self.bot = bot
 		try:
-			with open('rain.json') as f:
-				self.lookup = json.load(f)
+			with open('pages.json') as f:
+				self.ref = json.load(f)
 		except:
-			self.lookup = {'DA':{},'CF':{},'SJ':{}}
+			self.ref = []
+		self.makeIndexs()
 	
+	def makeIndexs(self):
+		self.dex = {'DA':{},'CF':{},'SJ':{}}
+		for i,page in enumerate(self.ref):
+			if 'CF page' in page:
+				self.dex['CF'][page['CF page']] = i
+			if 'SJ page' in page:
+				self.dex['SJ'][page['SJ page']] = i
+			if 'DA page' in page:
+				for j in page['DA page']:
+					self.dex['DA'][j] = i
+			if 'chars' in page:
+				page['chars'] = set(page['chars'])
+	
+	def genPage(self,i):
+		out = ''
+		if 'CF page' in self.ref[i]:
+			out += 'Comic Fury: http://rain.thecomicseries.com/comics/{}\n'.format(self.ref[i]['CF page'])
+		if 'SJ slug' in self.ref[i]:
+			out += 'SmackJeeves: http://rainlgbt.smackjeeves.com/comics/{}'.format(self.ref[i]['SJ slug'])
+		if 'DA slug' in self.ref[i]:
+			out += '\nDeviant art: https://www.deviantart.com/jocelynsamara/art/{}'.format(self.ref[i]['DA slug'])
+		return out
+		
 	@group(pass_context=True)
 	async def rain(self, ctx):
 		"""A group of commands to lookup updates from the rain comic."""
@@ -31,13 +74,10 @@ class Rain:
 		This will only work for pages in the bots page list
 		you can use the latest command to check if the list is up to date
 		"""
-		if page in self.lookup['CF']:
-			output = 'Comic Fury: http://rain.thecomicseries.com/comics/{}'.format(page)
-			if self.lookup['CF'][page][2] != '':
-				output += '\nSmackJeeves: http://rainlgbt.smackjeeves.com/comics/{}'.format(self.lookup['CF'][page][2])
-			if self.lookup['CF'][page][3] != '':
-				output += '\nDeviant art: https://www.deviantart.com/jocelynsamara/art/{}'.format(self.lookup['CF'][page][3])
-			em = discord.Embed(title=self.lookup['CF'][page][0], description=output, colour=cfg.colors['green'])
+		page = int(page)
+		if page in self.dex['CF']:
+			output = self.genPage(self.dex['CF'][page])
+			em = discord.Embed(title=self.ref[self.dex['CF'][page]]['Page Title'], description=output, colour=cfg.colors['green'])
 			return await ctx.send(embed=em)
 		else:
 			em = discord.Embed(title="Error", description="Unable to find an update with that number", colour=cfg.colors['red'])
@@ -53,14 +93,10 @@ class Rain:
 		This will only work for pages in the bots page list
 		you can use the latest command to check if the list is up to date
 		"""
-		if page in self.lookup['SJ']:
-			output = ''
-			if self.lookup['SJ'][page][1] != '':
-				output += 'Comic Fury: http://rain.thecomicseries.com/comics/{}\n'.format(self.lookup['SJ'][page][1])
-			output += 'SmackJeeves: http://rainlgbt.smackjeeves.com/comics/{}'.format(self.lookup['SJ'][page][2])
-			if self.lookup['SJ'][page][3] != '':
-				output += '\nDeviant art: https://www.deviantart.com/jocelynsamara/art/{}'.format(self.lookup['SJ'][page][3])
-			em = discord.Embed(title=self.lookup['SJ'][page][0], description=output, colour=cfg.colors['green'])
+		page = int(page)
+		if page in self.dex['SJ']:
+			output = self.genPage(self.dex['SJ'][page])
+			em = discord.Embed(title=self.ref[self.dex['SJ'][page]]['Page Title'], description=output, colour=cfg.colors['green'])
 			return await ctx.send(embed=em)
 		else:
 			em = discord.Embed(title="Error", description="Unable to find an update with that number", colour=cfg.colors['red'])
@@ -80,14 +116,9 @@ class Rain:
 		This will only work for pages in the bots page list
 		you can use the latest command to check if the list is up to date
 		"""
-		if page in self.lookup['DA']:
-			output = ''
-			if self.lookup['DA'][page][1] != '':
-				output += 'Comic Fury: http://rain.thecomicseries.com/comics/{}\n'.format(self.lookup['DA'][page][1])
-			if self.lookup['DA'][page][1] != '':
-				output += 'SmackJeeves: http://rainlgbt.smackjeeves.com/comics/{}\n'.format(self.lookup['DA'][page][2])
-			output += 'Deviant art: https://www.deviantart.com/jocelynsamara/art/{}'.format(self.lookup['DA'][page][3])
-			em = discord.Embed(title=self.lookup['DA'][page][0], description=output, colour=cfg.colors['green'])
+		if page in self.dex['DA']:
+			output = self.genPage(self.dex['DA'][page])
+			em = discord.Embed(title=self.ref[self.dex['DA'][page]]['DA Title'], description=output, colour=cfg.colors['green'])
 			return await ctx.send(embed=em)
 		else:
 			em = discord.Embed(title="Error", description="Unable to find an update with that page code", colour=cfg.colors['red'])
@@ -104,14 +135,74 @@ class Rain:
 		stop = html.find(b' ',start+23)
 		curUpdate = int(html[start+22:stop].decode("utf-8"))
 		output = 'Comic Fury: http://rain.thecomicseries.com/comics/\nSmackJeeves: http://rainlgbt.smackjeeves.com/comics/\n'
-		if curUpdate == len(self.lookup['CF']):
-			if self.lookup['CF'][str(curUpdate)][3] != '':
-				output += 'Deviant art: https://www.deviantart.com/jocelynsamara/art/' + self.lookup['CF'][str(curUpdate)][3] + '\n'
+		if curUpdate in self.dex['CF']:
+			index = self.dex['CF'][curUpdate]
+			if 'DA slug' in self.ref[index]:
+				output += 'Deviant art: https://www.deviantart.com/jocelynsamara/art/' + self.ref[index]['DA slug'] + '\n'
 			output += '\nPage list is up to date'
-			output = 'Title: {}\n'.format(self.lookup['CF'][str(curUpdate)][0]) + output
+			output = 'Title: {}\n'.format(self.ref[index]['Page Title']) + output
 		else:
-			output += '\nPage list is out of date by {} updates'.format(curUpdate-len(self.lookup['CF']))
+			output += '\nPage list is out of date by {} updates'.format(curUpdate-len(self.dex['CF']))
 		em = discord.Embed(title="Latest Page", description=output, colour=cfg.colors['green'])
+		return await ctx.send(embed=em)
+
+	@rain.command()
+	async def search(self, ctx, *, Query):
+		startTime = time.perf_counter()
+		inQuotes=False
+		i=0
+		terms = []
+		startI=0
+		while i<len(Query):
+			if Query[i]=='\\':
+				i+=2
+				continue
+			if Query[i]=='"':
+				if inQuotes:
+					inQuotes=False
+				else:
+					inQuotes=True
+			if Query[i]==' ' and not inQuotes:
+				#this is both an end of term and a start(if )
+				if startI<i:
+					terms.append(Query[startI:i])
+				startI=i+1
+			i+=1
+		if startI<i:
+			terms.append(Query[startI:i])
+		Cquery = set()
+		Tquery = []
+		for term in terms:
+			if term[0]=='-':
+				Cquery.add(stripName(term[1:]))
+			else:
+				Tquery.append(stipPunc(term))
+		print(Cquery,Tquery)
+		results = []
+		for j, page in enumerate(self.ref):
+			if Cquery:#char search first as its fast
+				if 'chars' not in page:
+					continue
+				if not Cquery.issubset(page['chars']):
+					continue
+			good=True
+			if Tquery:#word search
+				if 'text' not in page:
+					continue
+				for phrase in Tquery:
+					if phrase not in page['text']:
+						good=False
+						break
+			if good:
+				results.append(j)
+		output=[]
+		if len(results) > 10:
+			output.append('Too many pages to list')
+		else:
+			for result in results:
+				output.append(' http://rain.thecomicseries.com/comics/{}'.format(self.ref[result]['CF page']))
+		stopTime = time.perf_counter()
+		em = discord.Embed(title='found {} results, in {}ms'.format(len(results),int((stopTime-startTime)*1000)), description='\n'.join(output), colour=cfg.colors['green'])
 		return await ctx.send(embed=em)
 
 	@rain.command()
@@ -119,12 +210,15 @@ class Rain:
 	async def update(self, ctx):
 		"""Reload the page list without needing to restart the bot (bot owner only)"""
 		try:
-			with open('rain.json') as f:
-				self.lookup = json.load(f)
-				return await ctx.send('Updated sucsessfuly.')
+			with open('pages.json') as f:
+				self.ref = json.load(f)
+				resp = 'Updated sucsessfuly.'
+				return await ctx.send()
 		except:
-			self.lookup = {'DA':{},'CF':{},'SJ':{}}
-			return await ctx.send('Failed to update.')
+			self.ref = []
+			resp = 'Failed to update.'
+		self.makeIndexs()
+		return await ctx.send(resp)
 
 def setup(bot):
 	bot.add_cog(Rain(bot))
