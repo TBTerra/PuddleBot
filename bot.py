@@ -26,6 +26,9 @@ async def on_message(message):
 		return
 	if message.content[len(cfg.bot['prefix'])] == cfg.bot['prefix'][0]:
 		return
+	if message.webhook_id is not None:
+		message.author.bot = False
+		message.author.discriminator = -1
 	return await bot.process_commands(message)
 
 if __name__ == "__main__":

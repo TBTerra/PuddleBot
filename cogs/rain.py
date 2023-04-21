@@ -25,23 +25,22 @@ def stripName(t):
 	t=t.replace('  ',' ')
 	return t
 
-class Rain:
+class Rain(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		try:
 			with open('pages.json') as f:
 				self.ref = json.load(f)
-		except:
+		except Exception as e:
 			self.ref = []
+			print(e)
 		self.makeIndexs()
 	
 	def makeIndexs(self):
-		self.dex = {'DA':{},'CF':{},'SJ':{}}
+		self.dex = {'DA':{},'CF':{}}
 		for i,page in enumerate(self.ref):
 			if 'CF page' in page:
 				self.dex['CF'][page['CF page']] = i
-			if 'SJ page' in page:
-				self.dex['SJ'][page['SJ page']] = i
 			if 'DA page' in page:
 				for j in page['DA page']:
 					self.dex['DA'][j] = i
@@ -52,8 +51,6 @@ class Rain:
 		out = ''
 		if 'CF page' in self.ref[i]:
 			out += 'Comic Fury: http://rain.thecomicseries.com/comics/{}\n'.format(self.ref[i]['CF page'])
-		if 'SJ slug' in self.ref[i]:
-			out += 'SmackJeeves: http://rainlgbt.smackjeeves.com/comics/{}'.format(self.ref[i]['SJ slug'])
 		if 'DA slug' in self.ref[i]:
 			out += '\nDeviant art: https://www.deviantart.com/jocelynsamara/art/{}'.format(self.ref[i]['DA slug'])
 		return out
@@ -62,7 +59,7 @@ class Rain:
 	async def rain(self, ctx):
 		"""A group of commands to lookup updates from the rain comic."""
 		if ctx.invoked_subcommand is None:
-			return await ctx.send('Missing Argument: use `cf (number)` `sf (number)` `da (code)` or `latest`\nAlternatively use {comand prefix}help rain for a more indepth help',delete_after=10)
+			return await ctx.send('Missing Argument: use `cf (number)` `da (code)` or `latest`\nAlternatively use {comand prefix}help rain for a more indepth help',delete_after=10)
 			
 	@rain.command()
 	async def cf(self, ctx, *, page):
@@ -78,25 +75,6 @@ class Rain:
 		if page in self.dex['CF']:
 			output = self.genPage(self.dex['CF'][page])
 			em = discord.Embed(title=self.ref[self.dex['CF'][page]]['Page Title'], description=output, colour=cfg.colors['green'])
-			return await ctx.send(embed=em)
-		else:
-			em = discord.Embed(title="Error", description="Unable to find an update with that number", colour=cfg.colors['red'])
-			return await ctx.send(embed=em,delete_after=5)
-			
-	@rain.command()
-	async def sj(self, ctx, *, page):
-		"""
-		Look up a specified update on SmackJeeves
-		Usage:
-			{command_prefix}rain sj 1000
-			will look for the 1000th update on the SmackJeeves site
-		This will only work for pages in the bots page list
-		you can use the latest command to check if the list is up to date
-		"""
-		page = int(page)
-		if page in self.dex['SJ']:
-			output = self.genPage(self.dex['SJ'][page])
-			em = discord.Embed(title=self.ref[self.dex['SJ'][page]]['Page Title'], description=output, colour=cfg.colors['green'])
 			return await ctx.send(embed=em)
 		else:
 			em = discord.Embed(title="Error", description="Unable to find an update with that number", colour=cfg.colors['red'])
@@ -134,7 +112,7 @@ class Rain:
 		start = html.find(b'class="heading">Comic ')
 		stop = html.find(b' ',start+23)
 		curUpdate = int(html[start+22:stop].decode("utf-8"))
-		output = 'Comic Fury: http://rain.thecomicseries.com/comics/\nSmackJeeves: http://rainlgbt.smackjeeves.com/comics/\n'
+		output = 'Comic Fury: http://rain.thecomicseries.com/comics/\n'
 		if curUpdate in self.dex['CF']:
 			index = self.dex['CF'][curUpdate]
 			if 'DA slug' in self.ref[index]:
@@ -197,7 +175,9 @@ class Rain:
 				results.append(j)
 		output=[]
 		if len(results) > 10:
-			output.append('Too many pages to list')
+			output.append('Too many pages to list, showing first 10')
+			for j in range(10):
+				output.append(' http://rain.thecomicseries.com/comics/{}'.format(self.ref[results[j]]['CF page']))
 		else:
 			for result in results:
 				output.append(' http://rain.thecomicseries.com/comics/{}'.format(self.ref[result]['CF page']))
@@ -213,10 +193,11 @@ class Rain:
 			with open('pages.json') as f:
 				self.ref = json.load(f)
 				resp = 'Updated sucsessfuly.'
-				return await ctx.send()
-		except:
+				return await ctx.send(resp)
+		except Exception as e:
 			self.ref = []
 			resp = 'Failed to update.'
+			print(e)
 		self.makeIndexs()
 		return await ctx.send(resp)
 

@@ -6,7 +6,7 @@ import random
 import cfg
 import json
 
-class Custom:
+class Custom(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		#load custom command list
@@ -64,12 +64,15 @@ class Custom:
 			response = response.format(owner.display_name)
 		return format + response + format[::-1]
 	
+	@commands.Cog.listener()
 	async def on_message(self,message):
-		if message.author.bot:
+		##if message.author.bot:
+		if message.author == self.bot.user:
 			return
 		msg = message.content.lower()
 		if msg.startswith(self.bot.command_prefix):
 			msg = msg[len(self.bot.command_prefix):]
+			print(msg)
 			if msg in self.cc[1]:
 				return await message.channel.send(self.addFormat(message.author,self.cc[1][msg],''))
 			if msg in self.cc[2]:
@@ -83,15 +86,15 @@ class Custom:
 				return await message.channel.send(self.addFormat(message.author,self.cc[0][msg],form))
 		return
 	
-	async def on_command_error(self, ctx, error):
-		if isinstance(error, commands.CommandNotFound):
-			cmd = ctx.message.content[len(self.bot.command_prefix):]
-			if cmd in self.cc[1] or cmd in self.cc[2]:
-				return
-			else:
-				print('{} does not exist as a command'.format(ctx.message.content[len(self.bot.command_prefix):]))
-				return
-		raise error
+#	async def on_command_error(self, ctx, error):
+#		if isinstance(error, commands.CommandNotFound):
+#			cmd = ctx.message.content[len(self.bot.command_prefix):]
+#			if cmd in self.cc[1] or cmd in self.cc[2]:
+#				return
+#			else:
+#				print('{} does not exist as a command'.format(ctx.message.content[len(self.bot.command_prefix):]))
+#				return
+#		raise error
 	
 	@group(pass_context=True, aliases=["cc"])
 	async def custom(self, ctx):
@@ -227,6 +230,13 @@ class Custom:
 			list += '{}\n'.format(key)
 		list = list[:-1] + '```'
 		return await ctx.send(list)
+	
+	@commands.command()
+	@commands.check(user_has_power)
+	async def clear(self, ctx, num:int=1):
+		async for m in ctx.channel.history(limit=(num+1)):
+			await m.delete()
+		return await ctx.send('cleared {} messages'.format(num))
 
 def setup(bot):
 	bot.add_cog(Custom(bot))

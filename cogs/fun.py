@@ -4,7 +4,7 @@ import re
 import cfg
 from discord.ext import commands
 
-class Fun:
+class Fun(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 	
@@ -24,20 +24,22 @@ class Fun:
 				await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, member.display_name))
 			return
 		elif text == '@someone':
-			r = None
-			for role in ctx.guild.roles:
-				if role.id == cfg.bot['hug-role']:
-					r = role
-			if r == None:
-				return await ctx.send("I'm sorry {} But Hug someone is not set-up on this server.".format(ctx.author.display_name))
-			else:
-				#is the caller in the role
-				#if "role_id" in [y.id for y in author.roles]:
-				if r not in ctx.author.roles:
-					await ctx.send('Note: This Hugs a random person with the `{}` role. You don\'t seem to have it, so consider applying the role to yourself\n'.format(r.name),delete_after=30)
-				#select somone randomly from the role
-				huggee = random.choice(r.members)
-				return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, huggee.mention))
+			await ctx.send('The hug someone feature has been disabled for the time being, but you could still manualy hug someone with the "hugs OK" role',delete_after=15)
+			return await ctx.message.delete()
+		#	r = None
+		#	for role in ctx.guild.roles:
+		#		if role.id == cfg.bot['hug-role']:
+		#			r = role
+		#	if r == None:
+		#		return await ctx.send("I'm sorry {} But Hug someone is not set-up on this server.".format(ctx.author.display_name))
+		#	else:
+		#		#is the caller in the role
+		#		#if "role_id" in [y.id for y in author.roles]:
+		#		if r not in ctx.author.roles:
+		#			await ctx.send('Note: This Hugs a random person with the `{}` role. You don\'t seem to have it, so consider applying the role to yourself\n'.format(r.name),delete_after=30)
+		#		#select somone randomly from the role
+		#		huggee = random.choice(r.members)
+		#		return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, huggee.mention))
 		else:
 			return await ctx.send(":blush: *{} hugs {}*".format(self.bot.user.display_name, text))
 
@@ -109,6 +111,13 @@ class Fun:
 		converted = '{} : {}'.format(ctx.author.display_name,converted)
 		await ctx.send(converted)
 		return await ctx.message.delete()
+	
+	@commands.command(aliases=["jumbo"])
+	async def enlarge(self, ctx, emoji: discord.PartialEmoji = None):
+		if not emoji:
+			await ctx.send("You need to provide an emoji!")
+		else:
+			await ctx.send(emoji.url)
 
 	@commands.command()
 	async def roll(self, ctx, *, expression=""):
@@ -249,7 +258,7 @@ class Fun:
 					if roll_verbose:
 						response = response[:-1] + ')'  # clip the trailing ',' and replace it with a ')'
 			if roll_verbose:
-				response += ' Totaling: {}'.format(total)
+				response += ' Totalling: {}'.format(total)
 			else:
 				response += ' Total: {}'.format(total)
 			if i < (times-1):

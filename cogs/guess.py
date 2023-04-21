@@ -5,8 +5,10 @@ import json
 import random
 import time
 from PIL import Image, ImageDraw
+import asyncio
 
-class Guess:
+lock = asyncio.Lock()
+class Guess(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		#load gamestate
@@ -113,10 +115,13 @@ class Guess:
 		except:
 			return await ctx.send('Expecting a page number for the guess',delete_after=10)
 		gess = 'da {}'.format(num)
-		if gess in self.pages[self.state['curImg']]:
-			return await Guess.Correct(self,ctx)
-		else:
-			return await ctx.send('Thats not correct',delete_after=10)
+		global lock
+		async with lock:
+			if gess in self.pages[self.state['curImg']]:
+				await Guess.Correct(self,ctx)
+			else:
+				await ctx.send('Thats not correct',delete_after=10)
+		return
 
 	@guess.command()
 	async def cf(self, ctx, *, page):
@@ -126,30 +131,23 @@ class Guess:
 		except:
 			return await ctx.send('Expecting a page number for the guess',delete_after=10)
 		gess = 'cf {}'.format(num)
-		if gess in self.pages[self.state['curImg']]:
-			return await Guess.Correct(self,ctx)
-		else:
-			return await ctx.send('Thats not correct',delete_after=10)
-
-	@guess.command()
-	async def sj(self, ctx, *, page):
-		"""Make a guess at the current page using a SJ page number"""
-		try:
-			num = int(page)
-		except:
-			return await ctx.send('Expecting a page number for the guess',delete_after=10)
-		gess = 'sj {}'.format(num)
-		if gess in self.pages[self.state['curImg']]:
-			return await Guess.Correct(self,ctx)
-		else:
-			return await ctx.send('Thats not correct',delete_after=10)
+		global lock
+		async with lock:
+			if gess in self.pages[self.state['curImg']]:
+				await Guess.Correct(self,ctx)
+			else:
+				await ctx.send('Thats not correct',delete_after=10)
+		return
 	
 	@guess.command(aliases=["score","hs"])
 	async def highscore(self, ctx):
 		text = 'Rain Guess Highscores:'
 		for key, value in sorted(self.state['scores'].items(), key=lambda item: item[1], reverse=True)[:9]:
-			ppl = await self.bot.get_user_info(key)
-			text = text + '\n{}:\t{}'.format(ppl.display_name,value)
+			try:
+				ppl = await ctx.guild.fetch_member(key)
+				text = text + '\n{}:\t{}'.format(ppl.display_name,value)
+			except:
+				text = text + '\nUnkown user:\t{}'.format(value)
 		return await ctx.send(text)
 
 def setup(bot):
